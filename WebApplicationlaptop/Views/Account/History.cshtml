@@ -1,0 +1,90 @@
+﻿@model IEnumerable<OrderModel>
+@{
+    ViewData["Title"] = "List History Orders placed by " + ViewBag.UserEmail;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h3>List History Orders placed by @ViewBag.UserEmail</h3>
+        <table class="table" id="myTable">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Order Code</th>
+                    <th>Shipping Cost</th>
+                    <th>Coupon Code</th>
+                    <th>UserName</th>
+                    <th>Order Status</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.OrderCode</td>
+                            <td>@string.Format("{0:N0} VND", @item.ShippingCost / 10)</td>
+
+                            <td>
+                                @if (item.OrderDetail != null && item.OrderDetail.Any())
+                                {
+                                    // Tính tổng ShippingCost từ danh sách OrderDetail
+                                    var totalShippingCost = item.OrderDetail.Sum(od => od.ShippingCost);
+                                    @totalShippingCost.ToString("C")
+                                    // Hiển thị tổng ShippingCost
+                                }
+                                else
+                                {
+                                    <span>0</span>
+                                    // Nếu không có chi tiết đơn hàng
+                                }
+                            </td>
+                            <td>@item.CouponCode</td>
+                            <td>@item.UserName</td>
+                            <td>
+                                @if (item.Status == 1)
+                                {
+                                    <span class="text text-success">Đơn hàng mới</span>
+                                }
+                                else if (item.Status == 2)
+                                {
+                                    <span class="text text-danger">Đã xử lý</span>
+                                }
+                                else
+                                {
+                                    <span class="text text-warning">Trạng thái khác</span>
+                                }
+                            </td>
+                            <td>@item.CreateDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a class="btn btn-warning btn-sm" asp-action="ViewOrder" asp-controller="Order" asp-route-id="@item.Id">Xem</a>
+                                <a class="btn btn-danger btn-sm" asp-action="Delete" asp-controller="Order" asp-route-id="@item.Id">Xóa</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">No orders found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6 .0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

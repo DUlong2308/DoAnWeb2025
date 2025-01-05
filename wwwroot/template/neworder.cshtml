@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order Confirmation</title>
+</head>
+<body>
+    <h2>New Order Confirmation</h2>
+    <p>Hello {{CustomerName}},</p>
+    <p>Your order has been successfully placed with the following details:</p>
+    <ul>
+        <li>Email: {{Email}}</li>
+        <li>Total Amount: {{Total}}</li>
+    </ul>
+    <p>Order Details:</p>
+    <ul>
+        {{#each Products}}
+        <li>{{ProductName}} - Giá: {{Price}} - Số lượng: {{Quantity}}</li>
+        {{/each}}
+    </ul>
+    <p>Thank you for your purchase!</p>
+</body>
+</html>

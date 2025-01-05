@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ProductModel>
+
+<div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        @foreach (var product in Model)
+        {
+            <div class="item @(product == Model.First() ? "active" : "")">
+                <div class="col-sm-4">
+                    <div class="product-image-wrapper">
+                        <div class="single-products">
+                            <div class="productinfo text-center">
+                                <img src="~/images/@product.Imange" alt="@product.Name" />
+                                <h2>@product.Price.ToString("#,##0") VND</h2>
+                                <p>@product.Name</p>
+                                @if (product.Quantity > 0)
+                                {
+                                    <!-- Nút Add to Cart nếu sản phẩm còn hàng -->
+                                    <form asp-action="Add" asp-controller="Cart" asp-route-id="@product.Id" method="post">
+                                        <button type="submit" class="btn btn-success btn-sm w-100 mt-2">
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <!-- Hiển thị thông báo hết hàng -->
+                                    <button class="btn btn-danger btn-sm w-100 mt-2" disabled>
+                                        Hết hàng
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+        <i class="fa fa-angle-left"></i>
+    </a>
+    <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+        <i class="fa fa-angle-right"></i>
+    </a>
+</div>
+<script>
+    $(function () {
+        var message = '@TempData["success"]';
+        if (message != '')
+            Swal.fire(message);
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

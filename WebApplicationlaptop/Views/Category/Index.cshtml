@@ -1,0 +1,103 @@
+﻿@model IEnumerable<ProductModel>
+
+<div class="col-sm-3">
+    @Html.Partial("_Silebarpartial")
+</div>
+
+<style>
+    .product-image-wrapper {
+        height: 450px;
+        position: relative;
+        overflow: hidden; /* Ẩn phần thừa khi phóng to */
+        transition: transform 0.3s ease; /* Hiệu ứng chuyển động cho toàn bộ thẻ */
+    }
+
+        .product-image-wrapper:hover {
+            transform: scale(1.05); /* Phóng to toàn bộ thẻ khi hover */
+        }
+
+    .single-products img {
+        width: 100%; /* Đảm bảo ảnh luôn đầy đủ trong thẻ */
+        height: 230px; /* Đặt chiều cao của hình ảnh */
+        transition: transform 0.3s ease; /* Thêm hiệu ứng chuyển động cho ảnh */
+    }
+
+    /* Phóng to ảnh khi hover */
+    .product-image-wrapper:hover .single-products img {
+        transform: scale(1.1); /* Phóng to hình ảnh khi hover */
+    }
+
+    .productinfo {
+        padding: 15px;
+        position: relative; /* Thêm position relative để có thể sử dụng z-index */
+    }
+
+        .productinfo h2,
+        .productinfo p {
+            margin: 5px 0;
+        }
+
+        /* Đảm bảo giá và các nút luôn nằm trên ảnh */
+        .productinfo h2 {
+            z-index: 2; /* Đặt giá lên trên hình ảnh */
+            position: relative; /* Để sử dụng z-index */
+        }
+
+        .productinfo .btn {
+            margin-top: 10px;
+            z-index: 2; /* Đặt nút lên trên hình ảnh */
+            position: relative; /* Để sử dụng z-index */
+        }
+</style>
+
+
+<div class="col-sm-9 padding-right">
+    <div class="features_items">
+        <!--features_items-->
+        <h2 class="title text-center">Features Items</h2>
+
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-4">
+                <div class="product-image-wrapper">
+                    <a asp-action="Details" asp-controller="Product" asp-route-id="@item.Id">
+                        <div class="single-products">
+                            <div class="productinfo text-center">
+                                <img src="~/images/@item.Imange" alt="@item.Imange" />
+                                <h2>@item.Price.ToString("#,##0")VND</h2>
+                                <p>@item.Name</p>
+                                <p> Danh Mục : @item.Category.Name</p>
+
+                                @if (item.Quantity > 0)
+                                {
+                                    <!-- Nút Add to Cart nếu sản phẩm còn hàng -->
+                                    <form asp-action="Add" asp-controller="Cart" asp-route-id="@item.Id" method="post">
+                                        <button type="submit" class="btn btn-success btn-sm w-100 mt-2">
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <!-- Hiển thị thông báo hết hàng -->
+                                    <button class="btn btn-danger btn-sm w-100 mt-2" disabled>
+                                        Hết hàng
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        }
+    </div><!--features_items-->
+</div>
+<script>
+    $(function () {
+        var message = '@TempData["success"]';
+        if (message != '')
+            Swal.fire(message);
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

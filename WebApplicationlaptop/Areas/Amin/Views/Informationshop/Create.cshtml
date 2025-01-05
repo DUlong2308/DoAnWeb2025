@@ -1,0 +1,108 @@
+﻿@model WebApplicationlaptop.Models.InformationshopModel
+
+@{
+    ViewData["Title"] = "Thêm thông tin shop";
+}
+
+<h1 class="mt-4">Thêm thông tin shop</h1>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="mt-3">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="Name">Tên shop</label>
+        <input type="text" name="Name" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Email">Email</label>
+        <input type="email" name="Email" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Phone">Số điện thoại</label>
+        <input type="text" name="Phone" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="map">Bản đồ:</label>
+        <input type="text" id="mapInput" class="form-control" readonly />
+
+        <!-- Google Maps Iframe -->
+       
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Mô Tả:</label>
+        <textarea name="Description" id="Description" class="form-control" rows="5"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImageUpload">Hình Ảnh:</label>
+        <input type="file" asp-for="ImageUpload" class="form-control-file" id="imageInput" onchange="previewImage(event)" />
+        <span asp-validation-for="ImageUpload" class="text-danger"></span>
+
+        <!-- Image Preview -->
+        <div id="imagePreview">
+            <img id="imgpreview" class="pt-2" style="max-width: 200px; height: auto;" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Thêm</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <!-- Include CKEditor CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/37.0.1/classic/ckeditor.js"></script>
+
+    <script>
+        // Initialize CKEditor for Description field
+        ClassicEditor
+            .create(document.querySelector('#Description'))
+            .catch(error => {
+                console.error(error);
+            });
+
+        // Function to preview image
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('imgpreview');
+                output.src = reader.result;  // Set image source to the base64 result
+            }
+            reader.readAsDataURL(event.target.files[0]); // Convert the file to data URL
+        }
+
+       
+        }
+    </script>
+
+    <!-- Load Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAP_API_KEY&libraries=places&callback=initMap" async defer></script>
+
+    <script src="~/backend/js/site.js"></script>
+    <script>
+    document.getElementById('addressInput').addEventListener('blur', function () {
+        var address = document.getElementById('addressInput').value;
+        var url = 'https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(address) + '&format=json';
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    var lat = data[0].lat;
+                    var lon = data[0].lon;
+                    console.log('Latitude:', lat, 'Longitude:', lon);
+                } else {
+                    alert('Không tìm thấy địa chỉ');
+                }
+            })
+            .catch(error => console.log(error));
+    });
+</script>
+}

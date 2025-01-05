@@ -1,0 +1,278 @@
+﻿@model ProductModel
+<style>
+    .review-section {
+        margin-top: 20px;
+    }
+
+        .review-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .review-section li {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .review-section .review-content {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .review-section .review-meta {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .review-section .review-content p {
+            text-align: left;
+            margin-left: 20px;
+        }
+
+        .review-section .review-meta i {
+            margin-right: 5px;
+        }
+
+        .review-section .review-form {
+            background-color: #f1f1f1;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+            .review-section .review-form input,
+            .review-section .review-form textarea {
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+            }
+
+            .review-section .review-form button {
+                float: right;
+            }
+    /* Star Rating */
+    .star-rating {
+        display: flex;
+        direction: row;
+        font-size: 30px;
+    }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            color: #ddd;
+            cursor: pointer;
+        }
+
+            .star-rating input:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+                color: #ffcc00; /* Highlight color */
+            }
+
+        .star-rating input:checked + label {
+            color: #ffcc00; /* Highlight color when checked */
+        }
+
+        .star-rating label.hover {
+            color: #ffcc00; /* Color when hovering */
+        }
+    /* Định dạng chung cho các ngôi sao */
+    .star-rating {
+        direction: rtl;
+        font-size: 24px;
+        color: #d3d3d3; /* Màu ngôi sao chưa được chọn (màu xám) */
+    }
+
+        .star-rating .fa-star {
+            cursor: pointer;
+            margin: 0 2px;
+        }
+
+            /* Màu sắc khi ngôi sao được chọn */
+            .star-rating .fa-star.checked {
+                color: #f5c518; /* Màu vàng cho ngôi sao đã được chọn */
+            }
+
+</style>
+
+<div class="row">
+    <div class="col-sm-3">
+        <partial name="_SilebarPartial" />
+    </div>
+
+    <div class="col-sm-9 padding-right">
+        <div class="product-details">
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="view-product">
+                        <!-- Bọc ảnh bằng Fancybox -->
+                        <a href="~/images/@Model.Imange" class="fancybox" data-fancybox="gallery" data-caption="@Model.Name">
+                            <img src="~/images/@Model.Imange" alt="@Model.Name" class="img-fluid" />
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-sm-7">
+                    <div class="product-information">
+                        <h2>@Model.Name</h2>
+                        <span>
+                            <span>@Model.Price.ToString("#,##0") VND</span>
+                            @if (Model.Quantity > 0)
+                            {
+                                <!-- Nút Add to Cart nếu sản phẩm còn hàng -->
+                                <form asp-action="Add" asp-controller="Cart" asp-route-id="@Model.Id" method="post">
+                                    <button type="submit" class="btn btn-success btn-sm w-100 mt-2">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <!-- Hiển thị thông báo hết hàng -->
+                                <button class="btn btn-danger btn-sm w-100 mt-2" disabled>
+                                    Hết hàng
+                                </button>
+                            }
+                        </span>
+                        <p><b>Tình Trạng:</b> @((Model.Quantity > 0) ? "Còn hàng" : "Hết hàng")</p>
+                        <p><b>Thương hiệu:</b> @Model.Brand.Name</p>
+                        <p><b>Danh mục:</b> @Model.Category.Name</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-tab shop-details-tab">
+            <div class="col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#details" data-toggle="tab">Details</a></li>
+                    <li><a href="#reviews" data-toggle="tab">Reviews</a></li>
+                </ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="details">
+                    <div class="col-sm-12">
+                        <!-- Hiển thị mô tả sản phẩm, đảm bảo các ảnh được bọc trong Fancybox -->
+                        @Html.Raw(Model.Description)
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="reviews">
+                    <div class="col-sm-12 review-section">
+                        @if (Model.Reviews != null && Model.Reviews.Count > 0)
+                        {
+                            foreach (var review in Model.Reviews)
+                            {
+                                <div class="review-content">
+                                    <ul class="review-meta">
+                                        <li><i class="fa fa-user"></i> @review.Name</li>
+                                        <li><i class="fa fa-envelope"></i> @review.Email</li>
+                                        <li><i class="fa fa-clock-o"></i> @review.CreatedAt.ToString("hh:mm tt")</li>
+                                        <li><i class="fa fa-calendar-o"></i> @review.CreatedAt.ToString("dd MMM yyyy")</li>
+                                    </ul>
+                                    <p>@review.Content</p>
+
+                                    <!-- Display Rating as Stars -->
+                                    <div class="star-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="fa fa-star @((review.Rating >= i) ? "checked" : "")"></i>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p>There are no reviews for this product yet.</p>
+                        }
+                        <p><b>Write Your Review</b></p>
+                        <form asp-action="SubmitReview" asp-controller="Product" method="post">
+                            <input type="hidden" name="ProductId" value="@Model.Id" />
+
+                            <span>
+                                <input type="text" name="Name" placeholder="Your Name" required />
+                                <input type="email" name="Email" placeholder="Email Address" required />
+                            </span>
+
+                            <textarea name="Content" placeholder="Write your review" required></textarea>
+
+                            <!-- Rating Stars UI -->
+                            <b>Rating: </b>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="Rating" value="5" />
+                                <label for="star5" class="star">&#9733;</label>
+                                <input type="radio" id="star4" name="Rating" value="4" />
+                                <label for="star4" class="star">&#9733;</label>
+                                <input type="radio" id="star3" name="Rating" value="3" />
+                                <label for="star3" class="star">&#9733;</label>
+                                <input type="radio" id="star2" name="Rating" value="2" />
+                                <label for="star2" class="star">&#9733;</label>
+                                <input type="radio" id="star1" name="Rating" value="1" />
+                                <label for="star1" class="star">&#9733;</label>
+                            </div>
+
+                            <button type="submit" class="btn btn-default pull-right">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommended_items">
+            <h2 class="title text-center">Recommended Items</h2>
+            <div id="recommended-products-carousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    @await Component.InvokeAsync("Recommend", new { productId = Model.Id })
+                </div>
+                <a class="left recommended-item-control" href="#recommended-products-carousel" data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="right recommended-item-control" href="#recommended-products-carousel" data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm link và script Fancybox -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Tự động thêm class fancybox vào các thẻ <a> chứa ảnh trong phần tử có class .col-sm-12
+        $(".col-sm-12 img").each(function () {
+            var imgSrc = $(this).attr("src");
+            var imgAlt = $(this).attr("alt");
+            var anchor = $('<a>').attr({
+                href: imgSrc,  // Đặt liên kết tới ảnh
+                class: 'fancybox',
+                'data-fancybox': 'gallery',  // Đặt nhóm gallery nếu bạn có nhiều ảnh
+                'data-caption': imgAlt      // Thêm mô tả nếu cần
+            });
+            $(this).wrap(anchor);  // Bao bọc thẻ <img> trong <a> có class fancybox
+        });
+
+        // Kích hoạt Fancybox cho các thẻ <a> có class fancybox
+        $(".fancybox").fancybox({
+            buttons: ["zoom", "close"],
+            protect: true,
+            transitionEffect: "fade"
+        });
+    });
+</script>
+

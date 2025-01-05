@@ -1,0 +1,27 @@
+﻿@model WebApplicationlaptop.Models.OrderModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order Confirmation</title>
+</head>
+<body>
+    <h2>New Order Confirmation</h2>
+    <p>Hello @Model.UserName,</p>
+    <p>Your order has been successfully placed with the following details:</p>
+    <ul>
+        <li>Email: @Model.UserName</li>
+        <li>Total Amount: @Model.OrderDetail.Sum(d => d.Price * d.Quantity)</li>
+    </ul>
+    <p>Order Details:</p>
+    <ul>
+        @foreach (var item in Model.OrderDetail)
+        {
+            <li>@item.ProductName - Price: @item.Price - Quantity: @item.Quantity - Total: @item.Price * @item.Quantity</li>
+        }
+    </ul>
+    <p>Thank you for your purchase!</p>
+</body>
+</html>

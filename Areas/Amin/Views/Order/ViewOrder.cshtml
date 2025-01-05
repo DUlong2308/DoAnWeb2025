@@ -1,0 +1,60 @@
+﻿@model IEnumerable<WebApplicationlaptop.Models.CartItemModel>
+
+@{
+    ViewData["Title"] = "ViewOrder";
+    Layout = "~/Areas/Amin/Views/Shared/_Layout.cshtml";
+    WebApplicationlaptop.Models.OrderModel order = (WebApplicationlaptop.Models.OrderModel)ViewBag.order;
+}
+
+<h1>ViewOrder</h1>
+<h3> Mã Đơn Hàng : @order.OrderCode</h3>
+<h3>Email khách hàng : @order.UserName</h3>
+<h3>Tên khách hàng: @order.Hovaten</h3>
+<h3>@order.CreateDate.ToString("dd/MM/yyyy")</h3>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantity)
+            </td>
+            
+        </tr>
+}
+    </tbody>
+</table>

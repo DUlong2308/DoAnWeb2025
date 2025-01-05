@@ -1,0 +1,42 @@
+﻿@model IEnumerable<ProductModel>
+
+@{
+    int totalItems = Model.Count();
+}
+
+<div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        @for (int i = 0; i < totalItems; i += 3)
+        {
+            <div class="item @(i == 0 ? "active" : "")">
+                @for (int j = i; j < i + 3 && j < totalItems; j++)
+                {
+                    var product = Model.ElementAt(j);
+                    <div class="col-sm-4">
+                        <div class="product-image-wrapper">
+                            <div class="single-products">
+                                <div class="productinfo text-center">
+                                    <a href="@Url.Action("Details", "Product", new { id = product.Id })">
+                                        <div class="productinfo text-center">
+                                            <img src="~/images/@product.Imange" alt="@product.Name" />
+                                            <h2>@product.Price.ToString("#,##0") VND</h2>
+                                            <p>@product.Name</p>
+                                            <a class="btn btn-default add-to-cart" asp-action="Add" asp-controller="Cart" asp-route-id="@product.Id"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                        </div>
+                                    </a>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+        <i class="fa fa-angle-left"></i>
+    </a>
+    <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+        <i class="fa fa-angle-right"></i>
+    </a>
+</div>
