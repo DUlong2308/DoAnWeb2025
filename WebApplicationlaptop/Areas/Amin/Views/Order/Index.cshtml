@@ -17,9 +17,11 @@
     <label for="orderStatusFilter">Lọc theo trạng thái:</label>
     <select id="orderStatusFilter" class="form-control select-update-order" style="width: 20%; height: auto;">
         <option value="">Tất cả Đơn Hàng</option>
-        <option value="1">Đơn Hàng Mới</option>
-        <option value="0">Đơn Hàng Đã Xử Lý</option>
+        <option value="0">Chưa xác nhận</option>
+        <option value="1">Đã xác nhận</option>
+        <option value="2">Đã xử lý</option>
     </select>
+
 </div>
 
 <!-- Bảng danh sách đơn hàng -->
@@ -41,13 +43,34 @@
             <tr class="order-row" data-status="@order.Status">
                 <th scope="row">@order.Id</th>
                 <td>@order.OrderCode</td>
-                <td>@(order.Status == 0 ? "Đã Xử Lý" : "Mới")</td>
+                <td>
+                    @if (order.Status == 0)
+                    {
+                        <span class="text text-info">Chưa xác nhận</span>  <!-- Mới thêm trạng thái Chưa xác nhận -->
+                    }
+                    else if (order.Status == 1)
+                    {
+                        <span class="text text-success">Đã xác nhận</span> <!-- Đã xác nhận -->
+                    }
+                    else if (order.Status == 2)
+                    {
+                        <span class="text text-danger">Đã xử lý</span> <!-- Đã xử lý -->
+                    }
+                    else
+                    {
+                        <span class="text text-warning">Trạng thái khác</span> <!-- Trạng thái không xác định -->
+                    }
+                </td>
                 <td>@order.CreateDate.ToString("dd/MM/yyyy")</td>
                 <td>@(order.PaymentMethod == "COD" ? "COD" : "Thanh toán Momo")</td>
                @*  <td>@order.CouponCode</td> *@
                 <td>
                     <a href="@Url.Action("ViewOrder", "Order", new { area = "Amin", id = order.Id })" class="btn btn-warming btn-sm">ViewOrder</a>
                     <a href="@Url.Action("Conform", "Order", new { area = "Amin", id = order.Id })" class="btn btn-success btn-sm">Conform</a>
+                    @if (order.Status != 2)
+                    {
+                        <a href="@Url.Action("ConfirmDelivery", "Order", new { area = "Amin", id = order.Id })" class="btn btn-info btn-sm">Xác Nhận Đã Giao Hàng</a>
+                    }
 
                 </td>
             </tr>
@@ -57,20 +80,17 @@
 
 @section Scripts {
     <script>
-        document.getElementById('orderStatusFilter').addEventListener('change', function () {
-            var selectedValue = this.value;
-            var rows = document.querySelectorAll('#orderList .order-row');
+        // Lắng nghe sự kiện thay đổi giá trị của select
+        document.getElementById("orderStatusFilter").addEventListener("change", function () {
+            var status = this.value;
 
-            rows.forEach(function (row) {
-                var rowStatus = row.getAttribute('data-status');
-
-                // Nếu giá trị trạng thái khớp với giá trị đã chọn hoặc nếu không có giá trị nào được chọn
-                if (selectedValue === "" || rowStatus === selectedValue) {
-                    row.style.display = ''; // Hiển thị hàng
-                } else {
-                    row.style.display = 'none'; // Ẩn hàng
-                }
-            });
+            if (status === "") {
+                // Nếu chọn "Tất cả Đơn Hàng", làm mới lại trang
+                location.reload(); // Refresh lại trang hiện tại
+            } else {
+                // Nếu chọn một trạng thái, điều hướng tới URL với tham số status
+                window.location.href = '@Url.Action("Index", "Order", new { area = "Amin", status = "__status__" })'.replace("__status__", status);
+            }
         });
     </script>
 }

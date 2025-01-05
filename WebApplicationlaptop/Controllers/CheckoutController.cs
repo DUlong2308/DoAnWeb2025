@@ -74,7 +74,7 @@ namespace WebApplicationlaptop.Controllers
                 ShippingCost = shippingPrice,
                 OrderCode = orderCode,
                 UserName = userEmail,
-                Status = 1,
+                Status = 0,
                 CreateDate = DateTime.Now,
                 CouponCode = couponCode,
                 PaymentMethod = OrderId ?? "COD",
@@ -107,7 +107,8 @@ namespace WebApplicationlaptop.Controllers
                     OrderModelId = orderItem.Id,
                     PhoneNumber = user.PhoneNumber,
                     Fullname = user.FullName,
-                    Address = address // Lưu địa chỉ vào thuộc tính Address
+                    Address = address, // Lưu địa chỉ vào thuộc tính Address
+                    DiscountAmount = discountAmount
                 };
 
                 // Lưu chi tiết đơn hàng vào cơ sở dữ liệu

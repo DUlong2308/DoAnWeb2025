@@ -31,7 +31,7 @@ namespace WebApplicationlaptop.Models
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
         public string Fullname { get; set; }
-
+        public decimal? DiscountAmount { get; set; }
 
         //[ForeignKey("ProductId")]
         //public ProductModel Product { get; set; }

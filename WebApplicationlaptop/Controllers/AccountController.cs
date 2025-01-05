@@ -53,6 +53,46 @@ namespace WebApplicationlaptop.Controllers
             // Trả về view với danh sách đơn hàng
             return View(orders);
         }
+        public async Task<IActionResult> ViewOrder(int id)
+        {
+            var order = await _dataContext.Orders
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var lstOrderDetail = await _dataContext.OrderDetails
+                .Where(od => od.OrderModelId == id)
+                .ToListAsync();
+
+            var listCart = new List<CartItemModel>();
+
+            foreach (var item in lstOrderDetail)
+            {
+                var product = await _dataContext.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    var cartItem = new CartItemModel
+                    {
+                        ProductId = item.ProductId,
+                        Quantity = item.Quantity,
+                        Price = product.Price,
+                        ProductName = product.Name,
+                        Imange = product.Imange
+                    };
+                    listCart.Add(cartItem);
+                }
+            }
+
+            var orderDetail = lstOrderDetail.FirstOrDefault();
+
+            ViewBag.Order = order;
+            ViewBag.OrderDetail = orderDetail;
+
+            return View(listCart);
+        }
         [AllowAnonymous]
         public async Task LoginByGoogle()
         {

@@ -7,6 +7,8 @@
     var order = (WebApplicationlaptop.Models.OrderModel)ViewBag.Order;
     var orderDetail = (WebApplicationlaptop.Models.OrderDetail)ViewBag.OrderDetail; // Retrieve OrderDetail
     decimal totalAmount = 0; // Initialize total amount
+    decimal discountAmount = orderDetail.DiscountAmount ?? 0; // Nếu null, gán giá trị mặc định là 0
+                                                              
 }
 
 <div class="container mt-5">
@@ -19,6 +21,10 @@
             <h5>SDT: <span class="text-muted">@orderDetail.PhoneNumber</span></h5>
             <h5>Địa Chỉ: <span class="text-muted">@orderDetail.Address</span></h5>
             <h5>Phí Vận Chuyển: <span class="text-muted">@orderDetail.ShippingCost.ToString("N0")</span></h5> <!-- Display Shipping Cost -->
+            @if (discountAmount > 0)
+            {
+                <h5>Giảm Giá: <span class="text-muted">@discountAmount.ToString("N0")</span></h5> <!-- Display Discount Amount -->
+            }
         </div>
     </div>
 
@@ -51,7 +57,11 @@
     </div>
 
     <h3 class="text-right">Tổng Tiền Đơn Hàng: <span class="text-danger">@totalAmount.ToString("N0")</span></h3>
-    <h3 class="text-right">Tổng Tiền (Bao gồm Phí Vận Chuyển): <span class="text-danger">@((totalAmount + orderDetail.ShippingCost).ToString("N0"))</span></h3> <!-- Total including Shipping Cost -->
+    @if (discountAmount > 0)
+    {
+        <h3 class="text-right">Tổng Tiền Sau Giảm Giá: <span class="text-danger">@((totalAmount - discountAmount).ToString("N0"))</span></h3> <!-- Total after Discount -->
+    }
+    <h3 class="text-right">Tổng Tiền (Bao gồm Phí Vận Chuyển): <span class="text-danger">@((totalAmount - discountAmount + orderDetail.ShippingCost).ToString("N0"))</span></h3> <!-- Total including Shipping Cost and Discount -->
 </div>
 
 @section Scripts {
