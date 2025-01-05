@@ -1,0 +1,21 @@
+﻿.avatar-preview-frame {
+    width: 200px; /* Độ rộng của khung */
+    height: 200px; /* Độ cao của khung */
+    border: 2px solid #ccc; /* Viền của khung */
+    overflow: hidden; /* Không cho phép hình ảnh vượt ra ngoài khung */
+    margin-bottom: 10px; /* Khoảng cách dưới khung */
+    display: flex; /* Sử dụng flexbox để căn giữa hình ảnh bên trong */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    position: relative; /* Để căn giữa hình ảnh bên trong */
+}
+
+    .avatar-preview-frame img {
+        max-width: 100%; /* Hình ảnh không vượt quá khung */
+        max-height: 100%; /* Hình ảnh không vượt quá khung */
+        display: block; /* Hiển thị hình ảnh theo dạng block */
+        position: absolute; /* Để căn giữa hình ảnh bên trong khung */
+        top: 50%; /* Đưa hình ảnh lên trên 50% của khung */
+        left: 50%; /* Đưa hình ảnh sang phải 50% của khung */
+        transform: translate(-50%, -50%); /* Dịch chuyển hình ảnh để căn giữa */
+    }

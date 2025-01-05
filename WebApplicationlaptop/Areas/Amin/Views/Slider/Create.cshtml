@@ -1,0 +1,64 @@
+﻿@model WebApplicationlaptop.Models.SliderModel
+
+@{
+    ViewData["Title"] = "Thêm Slider Mới";
+}
+
+<h2>Thêm Slider Mới</h2>
+
+<div class="col-md-10">
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="Name">Tên Slider:</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description">Mô Tả:</label>
+            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Status">Trạng Thái:</label>
+            <select asp-for="Status" class="form-control">
+                <option value="1">Kích hoạt</option>
+                <option value="0">Không kích hoạt</option>
+            </select>
+            <span asp-validation-for="Status" class="text-danger"></span>
+        </div>
+
+        <div class="form -group">
+            <label asp-for="ImageUpload">Hình Ảnh:</label>
+            <input type="file" asp-for="ImageUpload" class="form-control-file" id="fileInput" accept="image/*" />
+            <span asp-validation-for="ImageUpload" class="text-danger"></span>
+            <img id="imgpreview" class="pt-2" style="display:none; max-width: 300px;" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Thêm Slider</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Chức năng xem trước hình ảnh
+        document.getElementById('fileInput').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            const imgPreview = document.getElementById('imgpreview');
+            if (file) {
+                const imgURL = URL.createObjectURL(file);
+                imgPreview.src = imgURL;
+                imgPreview.style.display = 'block'; // Hiện hình ảnh
+            } else {
+                imgPreview.style.display = 'none'; // Ẩn nếu không có tệp nào được chọn
+            }
+        });
+    </script>
+}

@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>@ViewData["title"] Admin</title>
+    <link href="~/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/css/Slider.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="~/css/prettyPhoto.css" rel="stylesheet">
+    <link href="~/css/price-range.css" rel="stylesheet" >
+    <link href="~/css/animate.css" rel="stylesheet">
+
+   
+    <link href="~/backend/css/new.css" rel="stylesheet">
+    <link href="~/css/responsive.css" rel="stylesheet">
+    <link href="~/ckeditor/build/ckeditor.js.map">
+
+    
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Verdana, sans-serif;
+        }
+
+        .mySlides {
+            display: none;
+        }
+
+        img {
+            vertical-align: middle;
+        }
+
+        /* Custom styles */
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        header {
+            background: #333;
+            color: white;
+            padding: 1rem;
+        }
+
+        .header-bottom {
+            background: #444;
+            padding: 10px 0;
+        }
+
+            .header-bottom .navbar-nav li a {
+                color: white;
+            }
+
+        .mainmenu {
+            display: flex;
+        }
+
+            .mainmenu ul {
+                display: flex;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+                .mainmenu ul li {
+                    margin-right: 15px;
+                }
+
+                    .mainmenu ul li a {
+                        text-decoration: none;
+                        color: white;
+                        padding: 10px 15px;
+                        border-radius: 5px;
+                        transition: background 0.3s ease;
+                    }
+
+                        .mainmenu ul li a:hover {
+                            background: #555;
+                        }
+
+        .content {
+            display: flex;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #f7f7f7;
+            padding: 1rem;
+            border-right: 1px solid #ddd;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+                        <div class="mainmenu pull-left">
+                            <ul class="nav navbar-nav collapse navbar-collapse">
+                                <li><a asp-controller="Product">Sản phẩm</a></li>
+                                <li><a asp-controller="Category">Danh mục</a></li>
+                                <li><a asp-controller="Brands">Thương hiệu</a></li>
+                                <li><a asp-controller="Contact">Thông Tin Liên Hệ</a></li>
+                                <li><a asp-controller="Order" asp-action="Index">Đơn Hàng</a></li>
+                                <li><a asp-controller="Role" asp-action="Index">Phân Quyền Truy cập</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="sidebar">
+            <h2>Admin Menu</h2>
+            <ul>
+                <li><a href="http://localhost:5047/">Trang Chủ</a></li>
+                
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="container">
+                <div class="row">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        © 2024 Your Company. All Rights Reserved.
+    </footer>
+
+    <script src="~/ckeditor/ckeditor.js"></script>
+    <script src="~/js/jquery.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <script src="~/js/jquery.scrollUp.min.js"></script>
+    <script src="~/js/price-range.js"></script>
+    <script src="~/js/jquery.prettyPhoto.js"></script>
+    <script src="~/backend/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

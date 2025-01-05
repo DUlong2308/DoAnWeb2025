@@ -1,0 +1,76 @@
+﻿@model IEnumerable<OrderModel>
+@{
+    ViewData["title"] = "Danh Sách Đơn Hàng";
+}
+
+<h3>Danh Sách Đơn Hàng</h3>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<!-- Dropdown để lọc đơn hàng theo trạng thái -->
+<div>
+    <label for="orderStatusFilter">Lọc theo trạng thái:</label>
+    <select id="orderStatusFilter" class="form-control select-update-order" style="width: 20%; height: auto;">
+        <option value="">Tất cả Đơn Hàng</option>
+        <option value="1">Đơn Hàng Mới</option>
+        <option value="0">Đơn Hàng Đã Xử Lý</option>
+    </select>
+</div>
+
+<!-- Bảng danh sách đơn hàng -->
+<table class="table" id="myTable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Mã Đơn Hàng</th>
+            <th scope="col">Trạng Thái</th>
+            <th scope="col">Ngày Tạo</th>
+            <th scope="col">Phương Thức Thanh Toán</th>
+            @* <th scope="col">Coupon code</th> *@
+            <th scope="col">Hành Động</th>
+        </tr>
+    </thead>
+    <tbody id="orderList">
+        @foreach (var order in Model)
+        {
+            <tr class="order-row" data-status="@order.Status">
+                <th scope="row">@order.Id</th>
+                <td>@order.OrderCode</td>
+                <td>@(order.Status == 0 ? "Đã Xử Lý" : "Mới")</td>
+                <td>@order.CreateDate.ToString("dd/MM/yyyy")</td>
+                <td>@(order.PaymentMethod == "COD" ? "COD" : "Thanh toán Momo")</td>
+               @*  <td>@order.CouponCode</td> *@
+                <td>
+                    <a href="@Url.Action("ViewOrder", "Order", new { area = "Amin", id = order.Id })" class="btn btn-warming btn-sm">ViewOrder</a>
+                    <a href="@Url.Action("Conform", "Order", new { area = "Amin", id = order.Id })" class="btn btn-success btn-sm">Conform</a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.getElementById('orderStatusFilter').addEventListener('change', function () {
+            var selectedValue = this.value;
+            var rows = document.querySelectorAll('#orderList .order-row');
+
+            rows.forEach(function (row) {
+                var rowStatus = row.getAttribute('data-status');
+
+                // Nếu giá trị trạng thái khớp với giá trị đã chọn hoặc nếu không có giá trị nào được chọn
+                if (selectedValue === "" || rowStatus === selectedValue) {
+                    row.style.display = ''; // Hiển thị hàng
+                } else {
+                    row.style.display = 'none'; // Ẩn hàng
+                }
+            });
+        });
+    </script>
+}

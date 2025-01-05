@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WebApplicationlaptop.Models.SliderModel>
+
+@{
+    ViewData["Title"] = "Danh sách Slider";
+}
+
+<h1>Danh sách Slider</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm Slider Mới</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Mô tả</th>
+            <th>Hình ảnh</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var slider in Model)
+        {
+            <tr>
+                <td>@slider.Id</td>
+                <td>@slider.Name</td>
+                <td>@slider.Description</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(slider.Image))
+                    {
+                        <img src="~/images/@slider.Image" alt="@slider.Name" style="width:100px; height:auto;" />
+                    }
+                </td>
+                <td>@slider.Status</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@slider.Id" class="btn btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@slider.Id" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,54 @@
+﻿@model IEnumerable<WebApplicationlaptop.Models.CategoryModel>
+
+<div class="category-tab">
+    <!--category-tab-->
+    <div class="col-sm-12">
+        <ul class="nav nav-tabs">
+            @foreach (var category in Model)
+            {
+                <li class="@(category == Model.First() ? "active" : "")">
+                    <a href="#@category.Name.ToLower()" data-toggle="tab">@category.Name</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="tab-content">
+        @foreach (var category in Model)
+        {
+            <div class="tab-pane fade @(category == Model.First() ? "active in" : "")" id="@category.Name.ToLower()">
+                @foreach (var product in category.Products.Take(4)) // Lấy 4 sản phẩm đầu tiên của mỗi danh mục
+                {
+                    <div class="col-sm-3">
+                        <div class="product-image-wrapper">
+                            <div class="single-products">
+                                <div class="productinfo text-center">
+                                    <a href="@Url.Action("Details", "Product", new { id = product.Id })">
+                                    <img src="~/images/@product.Imange" alt="@product.Name" />
+                                    <h2>@product.Price.ToString("#,##0") VND</h2>
+                                    <p>@product.Name</p>
+                                        @if (product.Quantity > 0)
+                                        {
+                                            <!-- Nút Add to Cart nếu sản phẩm còn hàng -->
+                                            <form asp-action="Add" asp-controller="Cart" asp-route-id="@product.Id" method="post">
+                                                <button type="submit" class="btn btn-success btn-sm w-100 mt-2">
+                                                    Add to Cart
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <!-- Hiển thị thông báo hết hàng -->
+                                            <button class="btn btn-danger btn-sm w-100 mt-2" disabled>
+                                                Hết hàng
+                                            </button>
+                                        }
+                                </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div><!--/category-tab-->

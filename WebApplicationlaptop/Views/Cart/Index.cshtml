@@ -1,0 +1,525 @@
+﻿@using WebApplicationlaptop.Models.ViewModel
+@model CartItemViewModel
+@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser > SignInManager
+@inject UserManager<ApplicationUser > UserManager
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .cart-header {
+            background-color: #ffa500;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .cart-item img {
+            max-width: 100px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-actions button {
+            margin: 0 5px;
+        }
+
+        .btn-clear, .btn-checkout {
+            margin-top: 10px;
+        }
+
+            .btn-clear:hover, .btn-checkout:hover {
+                transform: scale(1.05);
+            }
+
+        .total-price {
+            display: block;
+            font-size: 1.5rem;
+        }
+
+        .cart-row:hover {
+            background-color: #f1f1f1;
+            transition: background-color 0.3s ease;
+        }
+
+        .css_select {
+            display: inline-table;
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0;
+            border: solid 1px #686868;
+            border-radius: 5px;
+        }
+
+        .cart-footer {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+            .cart-footer .form-group {
+                margin-right: 20px;
+            }
+
+            .cart-footer .shipping-actions {
+                display: flex;
+                gap: 15px;
+            }
+
+            .cart-footer .btn {
+                padding: 10px 20px;
+                font-size: 1rem;
+                border-radius: 25px;
+                transition: all 0.3s ease;
+            }
+
+        .shipping-actions .btn-add-shipping,
+        .shipping-actions .btn-delete-shipping {
+            font-size: 0.875rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+            .shipping-actions .btn-add-shipping:hover,
+            .shipping-actions .btn-delete-shipping:hover {
+                transform: scale(1.05);
+            }
+
+        .price-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .payment-actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .payment-actions button {
+                font-size: 1.1rem;
+                padding: 10px 20px;
+                border-radius: 25px;
+                transition: transform 0.3s ease;
+            }
+
+                .payment-actions button:hover {
+                    transform: scale(1.05);
+                }
+
+        .cart-clear {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <h1 class="text-center mb-4">Your Shopping Cart</h1>
+        <table class="table table-bordered">
+            <thead class="cart-header">
+                <tr>
+                    <th>Item</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.CartItems.Count > 0)
+                {
+                    foreach (var item in Model.CartItems)
+                    {
+                        <tr class="cart-row">
+                            <td class="text-center">
+                                <img src="~/images/@item.Imange" alt="@item.ProductName">
+                            </td>
+                            <td>@item.ProductName</td>
+                            <td>@item.Price.ToString("#,##0") VND</td>
+                            <td class="text-center">
+                                <a class="btn btn-success btn-sm" asp-controller="Cart" asp-action="Increase" asp-route-id="@item.ProductId" title="Increase Quantity">
+                                    <i class="fas fa-plus"></i>
+                                </a>
+                                <span>@item.Quantity</span>
+                                <a class="btn btn-warning btn-sm" asp-controller="Cart" asp-action="Decrease" asp-route-id="@item.ProductId" title="Decrease Quantity">
+                                    <i class="fas fa-minus"></i>
+                                </a>
+                            </td>
+                            <td>@item.Total.ToString("#,##0") VND</td>
+                            <td class="text-center cart-actions">
+                                <a class="btn btn-danger btn-sm" asp-controller="Cart" asp-action="Remove" asp-route-id="@item.ProductId" title="Remove Item">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <h4>Your cart is empty</h4>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="cart-footer">
+            <h5 class="text-center mb-4">Step 1: Choose Shipping Address</h5>
+            <div class="shipping-actions">
+                <div class="form-group">
+                    <label for="houseNumber">Số nhà</label>
+                    <input type="text" id="houseNumber" class="form-control" placeholder="Nhập số nhà" />
+                </div>
+                <div class="form-group">
+                    <label for="tinh">Province/City</label>
+                    <select class="css_select" id="tinh" name="tinh" title="Select Province/City">
+                        <option value="0">Select Province/City</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quan">District</label>
+                    <select class="css_select" id="quan" name="quan" title="Select District">
+                        <option value="0">Select District</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="phuong">Ward/Commune</label>
+                    <select class="css_select" id="phuong" name="phuong" title="Select Ward/Commune">
+                        <option value="0">Select Ward/Commune</option>
+                    </select>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button class="btn btn-success btn-add-shipping" title="Calculate Shipping Fee">
+                    <i class="fas fa-check"></i> Calculate Shipping
+                </button>
+                <button class="btn btn-danger btn-delete-shipping" title="Clear Shipping Information">
+                    <i class="fas fa-times"></i> Clear Shipping
+                </button>
+            </div>
+
+            <div class="mt-3" id="fullAddress" style="display: none;">
+                <h6>Your Address:</h6>
+                <p id="addressDisplay"></p>
+            </div>
+            <form class="mb-3 mt-4">
+                <h5>Step 2: Apply Discount Coupon</h5>
+                <div class="form-group">
+                    <label for="couponCode">Coupon Code:</label>
+                    <input type="text" id="couponCode" class="form-control coupon-value" placeholder="Enter coupon code" />
+                </div>
+                <button type="button" class="btn btn-primary btn-apply-coupon mt-2">Apply Coupon</button>
+            </form>
+
+            <div class="price-summary">
+                <span>Total Products: @Model.CartItems.Sum(x => x.Quantity * x.Price).ToString("#,##0") VND</span>
+                <span>Shipping Fee: <span id="shippingFee">@Model.ShippingCost.ToString("#,##0")</span> VND</span>
+                <span>Discount: <span id="discountAmount">@Model.DiscountAmount.ToString("#,##0")</span> VND</span>
+                <span><strong>Total: <span id="grandTotal">@Model.GrandTotal.ToString("#,##0")</span> </strong></span>
+            </div>
+
+            <div class="payment-actions">
+                @if (Model.ShippingCost <= 0)
+                {
+                    <p class="text-danger">Please calculate shipping fee before checkout.</p>
+                }
+                else
+                {
+                    <a class="btn btn-primary" asp-action="Checkout" asp-controller="Checkout">
+                        <i class="fas fa-check"></i> Checkout
+                    </a>
+
+                    <form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
+                        <input type="hidden"  name="Amount" value="@Model.GrandTotal" />
+                        <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+                        <input type="hidden" name="OrderInformation" value="Payment for order at ShoplaptopLD" />
+                        <input type="hidden" name="Fullname" value="@User .Identity.Name" />
+                        <button class="btn btn-danger" type="submit">
+                            <i class="fas fa-mobile-alt"></i> Pay with MoMo
+                        </button>
+                    </form>
+                }
+            </div>
+
+            <div class="cart-clear mt-4">
+                <a class="btn btn-danger" asp-controller="Cart" asp-action="Clear" title="Clear Cart">
+                    <i class="fas fa-trash"></i> Clear Cart
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Load provinces
+            $.getJSON('https://esgoo.net/api-tinhthanh/1/0.htm', function (data) {
+                if (data.error === 0) {
+                    $.each(data.data, function (index, value) {
+                        $("#tinh").append(`<option value="${value.id}">${value.full_name}</option>`);
+                    });
+
+                    // When province is selected
+                    $("#tinh").change(function () {
+                        let tinhId = $(this).val();
+                        if (tinhId !== "0") {
+                            $.getJSON(`https://esgoo.net/api-tinhthanh/2/${tinhId}.htm`, function (data) {
+                                if (data.error === 0) {
+                                    $("#quan").html('<option value="0">Select District</option>');
+                                    $("#phuong").html('<option value="0">Select Ward/Commune</option>');
+                                    $.each(data.data, function (index, value) {
+                                        $("#quan").append(`<option value="${value.id}">${value.full_name}</option>`);
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    // When district is selected
+                    $("#quan").change(function () {
+                        let quanId = $(this).val();
+                        if (quanId !== "0") {
+                            $.getJSON(`https://esgoo.net/api-tinhthanh/3/${quanId}.htm`, function (data) {
+                                if (data.error === 0) {
+                                    $("#phuong").html('<option value="0">Select Ward/Commune</option>');
+                                    $.each(data.data, function (index, value) {
+                                        $("#phuong").append(`<option value="${value.id}">${value.full_name}</option>`);
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Load address from local storage
+            if (localStorage.getItem("houseNumber")) {
+                $("#houseNumber").val(localStorage.getItem("houseNumber"));
+            }
+            if (localStorage.getItem("tinhId")) {
+                $("#tinh").val(localStorage.getItem("tinhId")).change();
+            }
+            if (localStorage.getItem("quanId")) {
+                $("#quan").val(localStorage.getItem("quanId")).change();
+            }
+            if (localStorage.getItem("phuongId")) {
+                $("#phuong").val(localStorage.getItem("phuongId"));
+            }
+
+            // Add shipping
+            $(document).ready(function () {
+                // Kiểm tra và hiển thị thông tin địa chỉ đã lưu từ localStorage
+                var savedAddress = localStorage.getItem("savedAddress");
+                if (savedAddress) {
+                    $("#addressDisplay").text(savedAddress);  // Hiển thị thông tin địa chỉ đã lưu
+                    $("#fullAddress").show();  // Hiển thị phần full address
+                }
+
+                $(".btn-add-shipping").click(function () {
+                    var tinh = $("#tinh").find('option:selected').text();  // Lấy giá trị của tỉnh
+                    var quan = $("#quan").find('option:selected').text();  // Lấy giá trị của quận
+                    var phuong = $("#phuong").find('option:selected').text();  // Lấy giá trị của phường
+                    var sonha = $("#houseNumber").val().trim();
+                    // Kiểm tra nếu các trường chọn không có giá trị hợp lệ
+                    if (tinh === "Select Province/City" || quan === "Select District" || phuong === "Select Ward/Commune") {
+                        Swal.fire("Làm ơn không bỏ trống.");
+                    } else {
+                        var fullAddress = sonha + ', ' + phuong + ', ' + quan + ', ' + tinh;
+                        // Gửi dữ liệu tới server
+                        $.ajax({
+                            type: "POST",
+                            url: "@Url.Action("GetShipping", "Cart")",  // Kiểm tra URL của phương thức controller
+                            data: { tinh: tinh, quan: quan, phuong: phuong, houseNumber: sonha },   // Gửi dữ liệu
+                            success: function (result) {
+                                // Xử lý kết quả trả về
+                                if (result) {
+                                    var fullAddress = sonha + ', ' + phuong + ', ' + quan + ', ' + tinh;
+                                    $("#addressDisplay").text(fullAddress);  // Hiển thị thông tin địa chỉ đầy đủ
+                                    $("#fullAddress").show();  // Hiển thị phần full address
+                                    location.reload();
+                                    //
+                                  
+
+                                    // Lưu thông tin địa chỉ vào localStorage để giữ lại sau khi reload
+                                    document.cookie = "fullAddress=" + encodeURIComponent(fullAddress) + "; path=/; max-age=" + 60 * 60 * 24 * 30; // 30 days
+                                    localStorage.setItem("savedAddress", fullAddress);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire("Có lỗi xảy ra, vui lòng thử lại.");
+                            }
+                        });
+                    }
+                });
+            });
+
+
+            // Delete shipping
+            $(".btn-delete-shipping").click(function () {
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("DeleteShippingFee", "Cart")',
+                    success: function (result) {
+                        if (result) {
+                            localStorage.removeItem("houseNumber");
+                            localStorage.removeItem("tinhId");
+                            localStorage.removeItem("quanId");
+                            localStorage.removeItem("phuongId");
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                        Swal.fire("System error. Please try again later.");
+                    }
+                });
+            });
+
+            // Apply coupon
+            $(".btn-apply-coupon").click(function () {
+                var coupon_value = $(".coupon-value").val().trim();
+
+                // Check if coupon value is empty
+                if (coupon_value === "") {
+                    Swal.fire("Please enter a coupon code.");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetCoupon", "Cart")", // Make sure this URL is correct
+                    data: { coupon_value: coupon_value },
+                    success: function (result) {
+                        console.log(result); // Log the result for debugging
+
+                        if (result.success) {
+                            var shippingFeeText = $("#shippingFee").text(); // Get the text
+                            console.log("Shipping Fee Text:", shippingFeeText); // Log for debugging
+
+                            $("#discountAmount").text(result.discountAmount.toLocaleString() + " VND");
+
+                            // Use regex to extract the numeric part and multiply by 1000
+                            var shippingCost = parseFloat(shippingFeeText.replace(/[^0-9.-]+/g, "")) * 1000 || 0; // Extract numbers only and multiply by 1000
+
+                            console.log("Parsed Shipping Cost:", shippingCost); // Log the parsed shipping cost
+
+                            // Calculate new grand total including shipping cost
+                            var newGrandTotal = result.finalAmount + shippingCost; // Add shipping cost to the final amount
+                            $("#grandTotal").text(newGrandTotal.toLocaleString() + " VND");
+
+                            // Update hidden input field for Amount
+                            $("input[name='Amount']").val(newGrandTotal.toFixed(0));
+
+                            // Show shipping address
+                            $("#shippingAddress").show();
+                            // Lưu discount amount vào cookie
+                            document.cookie = "DiscountAmount=" + encodeURIComponent(result.discountAmount) + "; path=/; max-age=" + 60 * 60 * 24 * 30; // 30 days
+
+                            Swal.fire({
+                                title: result.message,
+                                icon: 'success',
+                                showConfirmButton: true,
+                                confirmButtonText: 'OK'
+                            });
+                        } else {
+                            Swal.fire(result.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(xhr.responseText); // Log error message
+                        Swal.fire("An error occurred, please try again.");
+                    }
+                });
+            });
+
+            // Save address to localStorage
+            document.getElementById('saveAddress').addEventListener('click', function () {
+                const address = {
+                    houseNumber: document.getElementById('houseNumber').value,
+                    province: document.getElementById('tinh').value,
+                    district: document.getElementById('quan').value,
+                    ward: document.getElementById('phuong').value
+                };
+                localStorage.setItem('shippingAddress', JSON.stringify(address));
+                alert('Address saved successfully!');
+            });
+        });
+        //increa
+        $(document).ready(function () {
+            $(".btn-checkout").click(function () {
+                // Lấy dữ liệu từ các trường nhập liệu
+                var houseNumber = $("#houseNumber").val().trim();
+                var tinh = $("#tinh").find('option:selected').text();
+                var quan = $("#quan").find('option:selected').text();
+                var phuong = $("#phuong").find('option:selected').text();
+
+                // Kiểm tra nếu các trường chọn không có giá trị hợp lệ
+                if (tinh === "Select Province/City" || quan === "Select District" || phuong === "Select Ward/Commune" || houseNumber === "") {
+                    Swal.fire("Làm ơn không bỏ trống.");
+                    return; // Dừng lại nếu có trường không hợp lệ
+                }
+
+                // Tạo địa chỉ đầy đủ
+                var fullAddress = houseNumber + ', ' + phuong + ', ' + quan + ', ' + tinh;
+
+                // Gửi dữ liệu thanh toán tới server
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Checkout", "Cart")",  // Kiểm tra URL của phương thức controller
+                    data: { address: fullAddress, OrderId: "COD" },  // Gửi địa chỉ đầy đủ và OrderId
+                    success: function (result) {
+                        if (result.success) {
+                            // Chuyển hướng đến trang xác nhận hoặc thông báo thành công
+                            window.location.href = "/Cart/Confirmation"; // Thay đổi URL theo yêu cầu
+                        } else {
+                            Swal.fire("Có lỗi xảy ra, vui lòng thử lại.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire("Có lỗi xảy ra, vui lòng thử lại.");
+                    }
+                });
+            });
+        });
+
+    </script>
+    <script>
+        $(function () {
+            var message = '@TempData["Warning"]';
+            if (message != '')
+                Swal.fire(message);
+        });
+    </script>
+    <script>
+        $(function () {
+            var message = '@TempData["success"]';
+            if (message != '')
+                Swal.fire(message);
+        });
+    </script>
+
+</body>
+</html>
