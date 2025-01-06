@@ -31,11 +31,14 @@
                     <i class="fas fa-edit"></i> Edit Profile
                 </button>
             </li>
-            <li class="nav-item">
-                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
-                    <i class="fas fa-cogs"></i> Settings
-                </button>
-            </li>
+            @if (Model.HasPassword)
+            {
+                <li class="nav-item">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+                        <i class="fas fa-cogs"></i> Settings
+                    </button>
+                </li>
+            }
             <li class="nav-item">
                 <a class="nav-link text-light" href="/">
                     <i class="fas fa-arrow-left"></i> Back
@@ -111,13 +114,17 @@
             <!-- Settings Tab -->
             <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
                 <ul>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Identity/Account/Manage/ChangePassword" target="_blank">
-                            <i class="fas fa-key"></i> Thay đổi mật khẩu
-                        </a>
-                    </li>
+                    @if (Model.HasPassword)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Identity/Account/Manage/ChangePassword" target="_blank">
+                                <i class="fas fa-key"></i> Thay đổi mật khẩu
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
+
 
             <!-- Order History Tab -->
            

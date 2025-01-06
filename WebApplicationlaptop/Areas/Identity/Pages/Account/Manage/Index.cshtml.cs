@@ -25,7 +25,7 @@ namespace WebApplication2314.Areas.Identity.Pages.Account.Manage
 
         [BindProperty]
         public InputModel Input { get; set; }
-
+        public bool HasPassword { get; set; }
         public class InputModel
         {
             [Phone]
@@ -63,6 +63,7 @@ namespace WebApplication2314.Areas.Identity.Pages.Account.Manage
                 Address = user.Address,
                 ProfilePictureUrl = user.ProfilePictureUrl  // Sử dụng ProfilePictureUrl
             };
+            HasPassword = await _userManager.HasPasswordAsync(user);
         }
 
         public async Task<IActionResult> OnGetAsync()
