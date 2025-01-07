@@ -86,6 +86,8 @@ namespace WebApplicationlaptop.Controllers
             await _dataContext.SaveChangesAsync();
 
             // Lấy thông tin giỏ hàng từ session
+
+
             var cartItems = HttpContext.Session.GetJson<List<CartItemModel>>("Cart") ?? new List<CartItemModel>();
 
             // Duyệt qua từng mặt hàng trong giỏ hàng để tạo chi tiết đơn hàng
@@ -93,6 +95,7 @@ namespace WebApplicationlaptop.Controllers
             {
                 var product = _dataContext.Products.Where(p => p.Id == cart.ProductId).FirstOrDefault();
                 product.Quantity -= cart.Quantity;
+                
                 product.Sold += cart.Quantity;
 
                 var orderDetails = new OrderDetail
@@ -117,6 +120,7 @@ namespace WebApplicationlaptop.Controllers
 
             // Lưu tất cả thay đổi vào cơ sở dữ liệu
             await _dataContext.SaveChangesAsync();
+
 
             // Xóa giỏ hàng sau khi thanh toán thành công
             HttpContext.Session.Remove("Cart");
