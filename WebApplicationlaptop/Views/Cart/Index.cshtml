@@ -256,18 +256,18 @@
                 else
                 {
                     <a class="btn btn-primary" asp-action="Checkout" asp-controller="Checkout">
-                        <i class="fas fa-check"></i> Checkout
+                        <i class="fas fa-check"></i> Checkout   
                     </a>
 
-                    <form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
-                        <input type="hidden"  name="Amount" value="@Model.GrandTotal" />
-                        <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
-                        <input type="hidden" name="OrderInformation" value="Payment for order at ShoplaptopLD" />
-                        <input type="hidden" name="Fullname" value="@User .Identity.Name" />
-                        <button class="btn btn-danger" type="submit">
-                            <i class="fas fa-mobile-alt"></i> Pay with MoMo
-                        </button>
-                    </form>
+                        <form method="POST" asp-action="CreatePaymentMomo" asp-controller="Payment">
+                            <input type="hidden" name="FullName" value="@User .Identity.Name" />
+                            <input type="hidden" name="OrderId" value="@Guid.NewGuid().ToString()" />
+                            <input type="hidden" name="Amount" value="@Model.GrandTotal" />
+                            <input type="hidden" name="OrderInformation" value="Payment for order at Laptop Shop" />
+                            <button type="submit" class="btn btn-danger">
+                                Pay with MoMo
+                            </button>
+                        </form>
                 }
             </div>
             }

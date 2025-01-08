@@ -129,7 +129,7 @@ namespace WebApplicationlaptop.Controllers
             await SendMail.SendOrderSummaryEmailAsync(orderItem);
             TempData["success"] = "Đã Thanh toán thành công ";
 
-            // Chuyển hướng về trang giỏ hàng
+            // Chuyển hướng về trang giỏ hàng   
             return RedirectToAction("Index", "Cart");
         }
         [HttpGet]

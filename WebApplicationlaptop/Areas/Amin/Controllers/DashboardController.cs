@@ -29,7 +29,7 @@ namespace WebApplicationlaptop.Areas.Amin.Controllers
             // Total cost price (assuming cost price is stored in Product table)
             var totalCostPrice = _dataContext.Products
                 .AsEnumerable()
-                .Sum(p => p.Quantity * p.CostPrice);
+                .Sum(p => p.Sold * p.CostPrice);
 
             // Total number of orders
             var totalOrders = _dataContext.Orders.Count();
